@@ -2,11 +2,12 @@ package routes
 
 import (
 	"github.com/drive-deep/task-microservice/handlers"
+	"github.com/drive-deep/task-microservice/services"
 	"github.com/gorilla/mux"
 )
 
-func RegisterRoutes(router *mux.Router) {
-	taskHandler := handlers.NewTaskHandler()
+func RegisterRoutes(router *mux.Router, taskService services.TaskService) {
+	taskHandler := handlers.NewTaskHandler(taskService)
 
 	// Define the routes
 	router.HandleFunc("/tasks", taskHandler.CreateTask).Methods("POST")

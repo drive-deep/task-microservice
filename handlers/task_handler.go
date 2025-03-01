@@ -60,36 +60,52 @@ func (h *TaskHandler) GetAllTasks(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatalf("Failed to load configuration: %v", err)
 	}
-	page := cfg.Server.Page
 	query := r.URL.Query()
-	
-	pageSize := cfg.Server.PageSize
-	if ps, ok := query["pageSize"]; ok {
-		pageSize, err = strconv.Atoi(ps[0])
-		if err != nil {
-			http.Error(w, "Invalid pageSize", http.StatusBadRequest)
-			return
-		}
-	}
 
-	if p, ok := query["page"]; ok {
-		page, err = strconv.Atoi(p[0])
+	// Pagination parameters
+	page := cfg.Server.Page
+	pageSize := cfg.Server.PageSize
+
+	if p := query.Get("page"); p != "" {
+		page, err = strconv.Atoi(p)
 		if err != nil {
 			http.Error(w, "Invalid page", http.StatusBadRequest)
 			return
 		}
 	}
 
-	sort := query.Get("sort")
-	filter := make(map[string]interface{})
-	if f := query.Get("filter"); f != "" {
-		if err := json.Unmarshal([]byte(f), &filter); err != nil {
-			http.Error(w, "Invalid filter format", http.StatusBadRequest)
+	if ps := query.Get("page_size"); ps != "" {
+		pageSize, err = strconv.Atoi(ps)
+		if err != nil {
+			http.Error(w, "Invalid page_size", http.StatusBadRequest)
 			return
 		}
 	}
 
-	tasks, err := h.Service.GetAllTasks(filter, sort, page, pageSize)
+	// Sorting parameters
+	sortBy := query.Get("sort_by")
+	if sortBy == "" {
+		sortBy = "updated_time asc"
+	}
+	order := query.Get("order")
+	if sortBy != "" && order != "" {
+		if order != "asc" && order != "desc" {
+			http.Error(w, "Invalid order", http.StatusBadRequest)
+			return
+		}
+		sortBy = sortBy + " " + order
+	}
+
+	// Filtering parameters
+	filter := make(map[string]interface{})
+	if status := query.Get("status"); status != "" {
+		filter["status"] = status
+	}
+	if priority := query.Get("priority"); priority != "" {
+		filter["priority"] = priority
+	}
+
+	tasks, err := h.Service.GetAllTasks(filter, sortBy, page, pageSize)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

@@ -34,25 +34,32 @@ func (p *PostgresDB) Connect() (*gorm.DB, error) {
 		return nil, err
 	}
 
-	// Add worker nodes to the coordinator
-	workerNodes := []string{"postgres-worker1:5432", "postgres-worker2:5432"} // Replace with your actual worker node addresses
-	for _, node := range workerNodes {
-		if err := p.db.Exec(fmt.Sprintf("SELECT * from master_add_node('%s')", node)).Error; err != nil {
-			log.Printf("Failed to add worker node %s: %v", node, err)
+	// Add worker nodes
+	workerNodes := []string{"postgres-worker1:5432", "postgres-worker2:5432"}
+	for _, worker := range workerNodes {
+		if err := p.db.Exec("SELECT * from master_add_node(?)", worker).Error; err != nil {
+			log.Printf("Failed to add worker node %s: %v", worker, err)
 		}
 	}
+	// Run migrations on all models
+    if err := p.db.AutoMigrate(&models.Task{}); err != nil {
+        return nil, fmt.Errorf("failed to run migrations: %w", err)
+    }
 
-	// Auto migrate all models in the models package
-	if err := p.db.AutoMigrate(
-		&models.Task{},
-		// Add other models here
-	); err != nil {
-		return nil, err
+	// Check if the tasks table is already distributed
+	var count int64
+	if err := p.db.Raw("SELECT count(*) FROM pg_dist_partition WHERE logicalrelid = 'tasks'::regclass").Scan(&count).Error; err != nil {
+		log.Printf("failed to check if tasks table is distributed: %v", err)
 	}
 
-	// Distribute the Task table
-	if err := p.db.Exec("SELECT create_distributed_table('tasks', 'id')").Error; err != nil {
-		return nil, err
+	if count == 0 {
+		// Distribute the tasks table
+		if err := p.db.Exec("SELECT create_distributed_table('tasks', 'id')").Error; err != nil {
+			return nil, fmt.Errorf("failed to distribute tasks table: %w", err)
+		}
+		log.Println("tasks table is now distributed")
+	} else {
+		log.Println("tasks table is already distributed")
 	}
 
 	return p.db, nil

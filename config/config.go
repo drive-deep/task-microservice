@@ -16,6 +16,8 @@ type Config struct {
 
 type ServerConfig struct {
     Port int `yaml:"port"`
+    PageSize int `yaml:"page_size"`
+    Page int `yaml:"page"`
 }
 
 type DatabaseConfig struct {
@@ -34,6 +36,8 @@ type RedisConfig struct {
 
 type KafkaConfig struct {
     Broker string `yaml:"broker"`
+    GroupID string `yaml:"group_id"`
+    Topics []string `yaml:"topics"`
 }
 
 func LoadConfig() (*Config, error) {

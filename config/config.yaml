@@ -1,5 +1,7 @@
 server:
   port: 8080
+  page_size: 20
+  page: 1
 
 database:
   host: postgres-coordinator
@@ -15,3 +17,5 @@ redis:
 
 kafka:
   broker: kafka:9092
+  group_id: task_group
+  topics: ['task_create', 'task_update', 'task_delete']

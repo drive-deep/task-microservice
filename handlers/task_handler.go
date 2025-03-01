@@ -2,9 +2,11 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 
+	"github.com/drive-deep/task-microservice/config"
 	"github.com/drive-deep/task-microservice/models"
 	"github.com/drive-deep/task-microservice/services"
 	"github.com/gorilla/mux"
@@ -54,10 +56,14 @@ func (h *TaskHandler) GetTask(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *TaskHandler) GetAllTasks(w http.ResponseWriter, r *http.Request) {
-	page := 1
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		log.Fatalf("Failed to load configuration: %v", err)
+	}
+	page := cfg.Server.Page
 	query := r.URL.Query()
-	var err error
-	pageSize := 10
+	
+	pageSize := cfg.Server.PageSize
 	if ps, ok := query["pageSize"]; ok {
 		pageSize, err = strconv.Atoi(ps[0])
 		if err != nil {

@@ -21,7 +21,10 @@ func (s *TaskService) CreateTask(entity *Task) error {
 	if err := s.repo.Create(entity); err != nil {
 		return err
 	}
-	return s.cache.AddTask(*entity)
+	if err := s.cache.AddTask(*entity); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (s *TaskService) GetTaskByID(id string) (*Task, error) {
@@ -53,12 +56,18 @@ func (s *TaskService) UpdateTask(entity *Task) error {
 	if err := s.repo.Update(entity); err != nil {
 		return err
 	}
-	return s.cache.UpdateTask(*entity)
+	if err := s.cache.UpdateTask(*entity); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (s *TaskService) DeleteTask(id string) error {
 	if err := s.repo.Delete(id); err != nil {
 		return err
 	}
-	return s.cache.DeleteTask(id)
+	if err := s.cache.DeleteTask(id); err != nil {
+		return err
+	}
+	return nil
 }

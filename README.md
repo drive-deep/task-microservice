@@ -255,4 +255,4 @@ To run the tests, follow these steps:
     ./test.sh
     ```
 
-  
+    You can see the result of `./test.sh` execution in `test_exec_result.md`.

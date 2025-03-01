@@ -235,3 +235,24 @@ When a message is sent to the `task_delete` topic, the specified task will be de
     "updated_at": "2025-02-28T00:00:00Z"
 }
 ```
+
+## Testing the Service
+
+### Running Tests
+You can use the `test.sh` script to test the service endpoints and Kafka messaging. The script uses `curl` to send HTTP requests and Kafka CLI tools to send messages to Kafka topics.
+
+### Running Tests
+You can use the `test.sh` script to test the service endpoints and Kafka messaging. The script uses `curl` to send HTTP requests and Kafka CLI tools to send messages to Kafka topics.
+
+To run the tests, follow these steps:
+1. Make the script executable:
+    ```sh
+    chmod +x test.sh
+    ```
+
+2. Execute the script:
+    ```sh
+    ./test.sh
+    ```
+
+  

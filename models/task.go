@@ -4,11 +4,11 @@ import "time"
 
 // Task represents a task with a title, description, status, priority, and timestamps
 type Task struct {
-    ID          string    `json:"id"`
-    Title       string    `json:"title"`
-    Description string    `json:"description"`
-    Status      string    `json:"status"`
-    Priority    int       `json:"priority"`
-    CreatedAt   time.Time `json:"created_at"`
-    UpdatedAt   time.Time `json:"updated_at"`
+    ID          string    `json:"id" gorm:"type:uuid;default:uuid_generate_v4()"`
+    Title       string    `json:"title" gorm:"type:varchar(100)"`
+    Description string    `json:"description" gorm:"type:text"`
+    Status      string    `json:"status" gorm:"type:varchar(20)"`
+    Priority    int       `json:"priority" gorm:"type:int"`
+    CreatedAt   time.Time `json:"created_at" gorm:"type:timestamp;default:current_timestamp"`
+    UpdatedAt   time.Time `json:"updated_at" gorm:"type:timestamp;default:current_timestamp"`
 }

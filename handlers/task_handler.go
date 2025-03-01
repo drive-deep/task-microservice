@@ -85,7 +85,7 @@ func (h *TaskHandler) GetAllTasks(w http.ResponseWriter, r *http.Request) {
 	// Sorting parameters
 	sortBy := query.Get("sort_by")
 	if sortBy == "" {
-		sortBy = "updated_time asc"
+		sortBy = "updated_at asc"
 	}
 	order := query.Get("order")
 	if sortBy != "" && order != "" {

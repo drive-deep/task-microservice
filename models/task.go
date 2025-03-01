@@ -9,6 +9,6 @@ type Task struct {
     Description string    `json:"description" gorm:"type:text"`
     Status      string    `json:"status" gorm:"type:varchar(20)"`
     Priority    int       `json:"priority" gorm:"type:int"`
-    CreatedAt   time.Time `json:"created_at" gorm:"type:timestamp;default:current_timestamp"`
-    UpdatedAt   time.Time `json:"updated_at" gorm:"type:timestamp;default:current_timestamp"`
+    CreatedAt   time.Time `json:"created_at" gorm:"type:timestamp;default:current_timestamp;autoCreateTime"`
+    UpdatedAt   time.Time `json:"updated_at" gorm:"type:timestamp;default:current_timestamp;autoUpdateTime"`
 }

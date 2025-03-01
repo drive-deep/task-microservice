@@ -8,7 +8,7 @@ for i in {1..10}
 do
     # JSON payload for the task
     TASK=$(cat <<EOF
-{
+{   "id": "$i",
     "title": "Sample Task $i",
     "description": "This is the description for task $i.",
     "status": "pending",
@@ -18,12 +18,12 @@ do
 EOF
 )
 
-    # Send POST request to create the task
-    curl -X POST $URL \
-             -H "Content-Type: application/json" \
-             -d "$TASK"
+# Send POST request to create the task
+curl -X POST $URL \
+            -H "Content-Type: application/json" \
+            -d "$TASK"
 
-    echo "Created task $i"
+echo "Created task $i"
 done
 
 echo "All tasks created successfully"
@@ -65,7 +65,7 @@ UPDATE_TASK_URL="http://localhost:8080/tasks/1"
 
 # JSON payload for the updated task
 UPDATED_TASK=$(cat <<EOF
-{
+{   "id": "1",
     "title": "Updated Task 1",
     "description": "This is the updated description for task 1.",
     "status": "completed",
